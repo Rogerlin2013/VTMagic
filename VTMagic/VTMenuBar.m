@@ -156,6 +156,9 @@ static NSInteger const kVTMenuBarTag = 1000;
         case VTLayoutStyleCenter:
             [self resetFramesForCenter];
             break;
+        case VTLayoutStyleRight:
+            [self resetFramesForRight];
+            break;
         default:
             [self resetFramesForDefault];
             break;
@@ -212,6 +215,26 @@ static NSInteger const kVTMenuBarTag = 1000;
     CGRect lastFame = [[_frameList lastObject] CGRectValue];
     CGFloat contentWidth = menuWidth - _menuInset.right;
     CGFloat itemOffset = (contentWidth - CGRectGetMaxX(lastFame))/2;
+    if (itemOffset <= 0) {
+        return;
+    }
+    
+    CGRect frame = CGRectZero;
+    NSArray *frames = [NSArray arrayWithArray:_frameList];
+    [_frameList removeAllObjects];
+    for (NSValue *value in frames) {
+        frame = [value CGRectValue];
+        frame.origin.x += itemOffset;
+        [_frameList addObject:[NSValue valueWithCGRect:frame]];
+    }
+}
+
+- (void)resetFramesForRight {
+    [self resetFramesForDefault];
+    CGFloat menuWidth = CGRectGetWidth(self.frame);
+    CGRect lastFame = [[_frameList lastObject] CGRectValue];
+    CGFloat contentWidth = menuWidth - _menuInset.right;
+    CGFloat itemOffset = (contentWidth - CGRectGetMaxX(lastFame));
     if (itemOffset <= 0) {
         return;
     }
